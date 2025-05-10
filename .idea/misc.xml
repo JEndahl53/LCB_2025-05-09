@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Black">
-    <option name="sdkName" value="Python 3.12 (blog_project_ch6)" />
+    <option name="enabledOnReformat" value="true" />
+    <option name="enabledOnSave" value="true" />
+    <option name="pathToExecutable" value="/Library/Frameworks/Python.framework/Versions/3.12/bin/black" />
+    <option name="sdkName" value="Python 3.12 virtualenv at /Volumes/Photos_Music_Web/web_projects/LCB_2025-05-09/.venv" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">

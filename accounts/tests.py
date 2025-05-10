@@ -7,8 +7,8 @@ class UsersManagersTests(TestCase):
     def test_create_user(self):
         User = get_user_model()
         user = User.objects.create_user(
-            username="testuser", 
-            email="testuser@example.com", 
+            username="testuser",
+            email="testuser@example.com",
             password="testpass1234",
         )
         self.assertEqual(user.username, "testuser")
