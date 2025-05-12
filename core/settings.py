@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # Local
     "accounts",
     "library",
+    "concerts",
 ]
 
 MIDDLEWARE = [

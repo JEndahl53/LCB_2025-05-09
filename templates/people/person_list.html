@@ -1,0 +1,14 @@
+<!-- templates/people/person_list.html -->
+<!-- This form shows a list view of the person type -->
+{% extends "_base.html" %} {% block content %}
+<h1>{{ view.get_model_verbose_name_plural|title }}</h1>
+<ul>
+  {% for person in people %}
+  <li>
+    <a href="{{ person.get_absolute_url }}">{{ person.get_full_name }}</a>
+  </li>
+  {% empty %}
+  <li>No people found.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

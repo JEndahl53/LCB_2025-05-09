@@ -1,0 +1,10 @@
+<!-- templates/people/person_confirm_delete.html -->
+<!-- this form is for person deletions -->
+{% extends "base.html" %} {% block content %}
+<h1>Delete {{ object }}</h1>
+<p>Are you sure you want to delete {{ object }}?</p>
+<form method="post">
+  {% csrf_token %}
+  <input type="submit" value="Confirm" />
+</form>
+{% endblock %}

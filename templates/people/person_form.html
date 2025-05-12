@@ -1,0 +1,9 @@
+<!-- templates/people/person_form.html -->
+<!-- this form is used for both add and edit -->
+{% extends "_base.html" %} {% block content %}
+<h1>{{ view.get_model_verbose_name }}</h1>
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <input type="submit" value="Save" />
+</form>
+{% endblock %}
