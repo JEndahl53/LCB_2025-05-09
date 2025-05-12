@@ -1,6 +1,5 @@
 # library/models.py
 
-from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
@@ -34,7 +33,8 @@ class Composer(PersonBase):
         return reverse("composer_detail", args=[str(self.id)])
 
     class Meta:
-        verbose_name_plural = "composers"
+        verbose_name = "Composer"
+        verbose_name_plural = "Composers"
 
 
 class Arranger(PersonBase):
@@ -44,7 +44,8 @@ class Arranger(PersonBase):
         return reverse("arranger_detail", args=[str(self.id)])
 
     class Meta:
-        verbose_name_plural = "arrangers"
+        verbose_name = "Arranger"
+        verbose_name_plural = "Arrangers"
 
 
 class Genre(models.Model):
@@ -54,7 +55,8 @@ class Genre(models.Model):
         return self.name
 
     class Meta:
-        verbose_name_plural = "genres"
+        verbose_name = "Genre"
+        verbose_name_plural = "Genres"
         ordering = ["name"]
 
 

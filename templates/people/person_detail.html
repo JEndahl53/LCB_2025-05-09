@@ -1,5 +1,128 @@
 <!-- templates/people/person_detail.html -->
 <!-- this is the detail view for a person -->
-{% extends "_base.html" %} {% block content %}
-<h1>{{ person }}</h1>
+{% extends "_base.html" %}
+
+{% block title %}
+  {% if person.first_name %}
+    {{ person.get_full_name }}
+  {% else %}
+    {{ person.last_name }}
+  {% endif %}
+  | LCB Library
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <!-- breadcrumb navigation -->
+  <div class="container mx-auto px-4 py-8">
+  <nav class="flex mb-8" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <a href="{% url 'home' %}"
+           class="inline-flex items-center text-sm font-medium text-slate-700 hover:text-blue-600">
+          <i class="fas fa-home mr-2"></i>
+          Home
+        </a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <i class="fa-solid fs-chevron-right text-gray-400 mx-2"></i>
+          <a href="#" class="text-sm font-medium text-slate-700 hover:text-blue-600">People</a>
+        </div>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <i class="fa-solid fs-chevron-right text-gray-400 mx-2"></i>
+          <span class="text-sm font-medium text-gray-500">
+              {% if person.first_name %}
+                {{ person.get_full_name }}
+              {% else %}
+                {{ person.last_name }}
+              {% endif %}
+            </span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+{% endblock breadcrumbs %}
+
+{% block content %}
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header section -->
+    <div class="bg-white shadow rounded-lg overflow-hidden mb-8">
+      <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">
+          {% if person.first_name %}
+            {{ person.get_full_name }}
+          {% else %}
+            {{ person.last_name }}
+          {% endif %}
+        </h1>
+      </div>
+
+      <!-- Person information -->
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Left column -->
+          <div class="space-y-4">
+            <div>
+              <h2 class="text-lg font-semibold text-gray-700">Personal Information</h2>
+              <div class="mt-2 border-t border-gray-200 pt-2">
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="text-sm font-medium text-gray-500">First Name</div>
+                  <div class="text-sm text-gray-900">{{ person.first_name|default:"-" }}</div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="text-sm font-medium text-gray-500">Last Name</div>
+                  <div class="text-sm text-gray-900">{{ person.last_name }}</div>
+                </div>
+
+                {% if person.birth_year %}
+                  <div class="text-sm font-medium text-gray-500">Birth Year</div>
+                  <div class="text-sm text-gray-900">{{ person.birth_year }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column (for additional info) -->
+        <div class="space-y-4">
+          {% if related_works %}
+            <div>
+              <h2 class="text-lg font-semibold text-gray-700">Related Works</h2>
+              <div class="mt-2 border-t border-gray-200 pt-2">
+                <ul class="list-disc list-inside text-sm text-gray-900">
+                  {% for work in related_works %}
+                    <li>{{ work.title }}</li>
+                  {% empty %}
+                    <li class="text-gray-500">No related works found.</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="flex space-x-3">
+    <a href="{% url model_name_for_url|add:'_update' pk=person.pk %}"
+       class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outine-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+      <i class="fas fa-edit mr-2"></i>
+      Edit
+    </a>
+    <a href="{% url model_name_for_url|add:'_delete' pk=person.pk %}"
+       class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outine-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+      <i class="fas fa-trash mr-2"></i>
+      Delete
+    </a>
+    <a href="{% url model_name_for_url|add:'_list' %}"
+       class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outine-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+      <i class="fa-solid fa-list mr-2"></i>
+      Back to List
+    </a>
+  </div>
+  </div>
 {% endblock %}

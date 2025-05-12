@@ -1,29 +1,38 @@
 <!-- templates/_base.html -->
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    {% load static %}
-    <title>{% block title %}LCB Library{% endblock title %}</title>
-    <link href="{% static 'css/output.css' %}" rel="stylesheet" />
-  </head>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  {% load static %}
+  <title>{% block title %}LCB Library{% endblock title %}</title>
+  <link href="{% static 'css/output.css' %}" rel="stylesheet"/>
+  <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css"/>
+  <script src="{% static 'fontawesomefree/js/all.min.js' %}"></script>
+</head>
 
-  <body>
-    <heading>
-      <div class="flex h-16 w-screen items-center bg-slate-500">
-        <img
-          src="{% static 'img/LCB Bell profile picture.jpg' %}"
-          alt="logo"
-          class="ml-5 h-12 w-12 rounded-lg object-cover"
-        />
-        <h2 class="ml-5 text-2xl text-white">LCB Library Project</h2>
-        <div class="ml-12 flex space-x-6">
-          <span class="text-lg text-white opacity-70">Concerts</span>
-          <span class="text-lg text-white opacity-70">Library</span>
-        </div>
-      </div>
-    </heading>
-    <main>{% block content %} {% endblock content %}</main>
-  </body>
+<body>
+
+<heading>
+  <div class="flex h-16 w-screen items-center bg-slate-500">
+    <img
+        src="{% static 'img/LCB Bell profile picture.jpg' %}"
+        alt="logo"
+        class="ml-5 h-12 w-12 rounded-lg object-cover"
+    />
+    <h2 class="ml-5 text-2xl text-white">LCB Library Project</h2>
+    <div class="ml-12 flex space-x-6">
+      <!-- ToDo Activate these links -->
+      <span <a href="#" class="text-lg text-white opacity-70">Concerts</span>
+      <span class="text-lg text-white opacity-70">Library</span>
+    </div>
+  </div>
+</heading>
+
+<navigation>
+  {% block breadcrumbs %}
+  {% endblock breadcrumbs %}
+</navigation>
+<main>{% block content %} {% endblock content %}</main>
+</body>
 </html>

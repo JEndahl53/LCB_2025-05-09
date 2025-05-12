@@ -1,9 +1,58 @@
 <!-- templates/people/person_form.html -->
 <!-- this form is used for both add and edit -->
-{% extends "_base.html" %} {% block content %}
-<h1>{{ view.get_model_verbose_name }}</h1>
-<form method="post">
-  {% csrf_token %} {{ form.as_p }}
-  <input type="submit" value="Save" />
-</form>
+{% extends "_base.html" %}
+{% block title %}
+  {{ view.get_model_verbose_name }} | LCB Library
+{% endblock %}
+
+{% block content %}
+  <div class="container mx-auto px-4 py-8">
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold text-slate-800">
+        {% if object %}
+          Edit {{ view.get_model_verbose_name }}
+        {% else %}
+          Add {{ view.get_model_verbose_name }}
+        {% endif %}
+      </h1>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <form method="post" class="space-y-6">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% for field in form %}
+          <div class="space-y-2">
+            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+              {{ field.label }}{% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+            </label>
+
+            {{ field }}
+
+            {% if field.errors %}
+              {% for error in field.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        <div class="flex justify-end space-x-3 pt-4">
+          <a href="{% url view.get_model_name_for_url|add:'_list' %}"
+             class="rounded border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</a>
+          <button type="submit"
+                  class="roudned bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2  focus:ring-blue-500 focus:ring-offset-2">
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 {% endblock %}

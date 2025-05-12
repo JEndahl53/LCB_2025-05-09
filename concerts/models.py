@@ -16,7 +16,8 @@ class Conductor(PersonBase):
         return reverse("conductor_detail", args=[str(self.id)])
 
     class Meta:
-        verbose_name_plural = "conductors"
+        verbose_name = "Conductor"
+        verbose_name_plural = "Conductors"
 
 
 class Guest(PersonBase):
@@ -26,7 +27,8 @@ class Guest(PersonBase):
         return reverse("guest_detail", args=[str(self.id)])
 
     class Meta:
-        verbose_name_plural = "guests"
+        verbose_name = "Guest"
+        verbose_name_plural = "Guests"
 
 
 class Venue(models.Model):
