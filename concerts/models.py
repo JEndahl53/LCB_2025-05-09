@@ -21,6 +21,7 @@ class Conductor(PersonBase):
 
 
 class Guest(PersonBase):
+    instrument = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
 
     def get_absolute_url(self):
