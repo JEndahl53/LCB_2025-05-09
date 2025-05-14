@@ -1,8 +1,18 @@
 # concerts/views.py
 # PersonBase views are in core/views.py
+from django.views.generic.detail import DetailView
+
 from core.forms import ConductorForm, GuestForm
 from library.models import PersonBase
-from .models import Conductor, Guest
+from django.views.generic import (
+    DetailView,
+    ListView,
+    DeleteView,
+    UpdateView,
+    CreateView,
+)
+from .models import Conductor, Guest, Venue
+from .forms import VenueForm
 from core.views import (
     PersonBaseDetailView,
     PersonBaseListView,
@@ -90,3 +100,44 @@ class GuestUpdateView(PersonBaseUpdateView):
 class GuestDeleteView(PersonBaseDeleteView):
     model = Guest
     success_url = reverse_lazy("guest_list")
+
+
+# Venue Views
+class VenueDetailView(DetailView):
+    model = Venue
+    template_name = "venue/venue_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = VenueForm()
+        return context
+
+
+class VenueListView(ListView):
+    model = Venue
+    template_name = "venue/venue_list.html"
+    context_object_name = "venues"
+    paginate_by = 20
+    ordering = ["name"]
+
+
+class VenueCreateView(CreateView):
+    model = Venue
+    form_class = VenueForm
+    template_name = "venue/venue_form.html"
+    success_url = reverse_lazy("venue_list")
+
+
+class VenueUpdateView(UpdateView):
+    model = Venue
+    form_class = VenueForm
+    template_name = "venue/venue_form.html"
+
+    def get_success_url(self):
+        return reverse_lazy("venue_detail", kwargs={"pk": self.object.pk})
+
+
+class VenueDeleteView(DeleteView):
+    model = Venue
+    template_name = "venue/venue_confirm_delete.html"
+    success_url = reverse_lazy("venue_list")

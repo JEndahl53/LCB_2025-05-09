@@ -11,6 +11,11 @@ from .views import (
     GuestCreateView,
     GuestUpdateView,
     GuestDeleteView,
+    VenueListView,
+    VenueDetailView,
+    VenueCreateView,
+    VenueUpdateView,
+    VenueDeleteView,
 )
 
 urlpatterns = [
@@ -34,4 +39,9 @@ urlpatterns = [
     path("guests/create/", GuestCreateView.as_view(), name="guest_create"),
     path("guests/<int:pk>/update/", GuestUpdateView.as_view(), name="guest_update"),
     path("guests/<int:pk>/delete/", GuestDeleteView.as_view(), name="guest_delete"),
+    path("venues/", VenueListView.as_view(), name="venue_list"),
+    path("venues/<int:pk>/", VenueDetailView.as_view(), name="venue_detail"),
+    path("venues/create/", VenueCreateView.as_view(), name="venue_create"),
+    path("venues/<int:pk>/update/", VenueUpdateView.as_view(), name="venue_update"),
+    path("venues/<int:pk>/delete/", VenueDeleteView.as_view(), name="venue_delete"),
 ]

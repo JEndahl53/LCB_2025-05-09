@@ -1,8 +1,7 @@
 from django.contrib import admin
 
-from .models import Conductor, Guest
+from .models import Conductor, Guest, Venue
 
 admin.site.register(Conductor)
 admin.site.register(Guest)
-
-# Register your models here.
+admin.site.register(Venue)

@@ -33,11 +33,11 @@ class Guest(PersonBase):
 
 class Venue(models.Model):
     name = models.CharField(max_length=100)
-    contact_name = models.CharField(max_length=100)
-    address = models.CharField(max_length=200)
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=2)
-    zip_code = models.CharField(max_length=5)
+    contact_name = models.CharField(max_length=100, blank=True)
+    address = models.CharField(max_length=200, blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    state = models.CharField(max_length=2, blank=True)
+    zip_code = models.CharField(max_length=5, blank=True)
     phone = models.CharField(max_length=100, blank=True)
     website = models.URLField(blank=True)
     notes = models.TextField(blank=True)
