@@ -11,8 +11,8 @@ from django.views.generic import (
     UpdateView,
     CreateView,
 )
-from .models import Conductor, Guest, Venue
-from .forms import VenueForm
+from .models import Conductor, Guest, Venue, Concert
+from .forms import VenueForm, ConcertForm
 from core.views import (
     PersonBaseDetailView,
     PersonBaseListView,
@@ -141,3 +141,35 @@ class VenueDeleteView(DeleteView):
     model = Venue
     template_name = "venue/venue_confirm_delete.html"
     success_url = reverse_lazy("venue_list")
+
+
+class ConcertListView(ListView):
+    model = Concert
+    template_name = "concert/concert_list.html"
+    context_object_name = "concerts"
+    paginate_by = 20
+    ordering = ["-date"]
+
+
+class ConcertDetailView(DetailView):
+    model = Concert
+    template_name = "concert/concert_detail.html"
+
+
+class ConcertCreateView(CreateView):
+    model = Concert
+    form_class = ConcertForm
+    template_name = "concert/concert_form.html"
+    success_url = reverse_lazy("concert_list")
+
+
+class ConcertUpdateView(UpdateView):
+    model = Concert
+    form_class = ConcertForm
+    template_name = "concert/concert_form.html"
+
+
+class ConcertDeleteView(DeleteView):
+    model = Concert
+    template_name = "concert/concert_confirm_delete.html"
+    success_url = reverse_lazy("concert_list")

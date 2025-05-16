@@ -1,0 +1,8 @@
+/* static/css/main.css
+* This file will be an additional css file for my project.
+* It was started initially to provide a work-around for the "giant caret" bug
+# I encountered in crispy-tailwind.
+ */
+select ~ .pointer-events-none {
+    display: none !important;
+}

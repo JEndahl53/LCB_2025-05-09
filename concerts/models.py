@@ -64,10 +64,25 @@ class Concert(models.Model):
     time = models.TimeField()
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
     conductor = models.ManyToManyField(Conductor, blank=True)
-    guests = models.ManyToManyField(Guest, blank=True)
+    guest = models.ManyToManyField(Guest, blank=True)
     description = models.TextField(blank=True)
     poster = models.ImageField(
         upload_to="posters/",
         blank=True,
         null=True,
     )
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("concert_detail", args=[str(self.id)])
+
+    def get_conductors_display(self):
+        return "; ".join(str(conductor) for conductor in self.conductor.all())
+
+    def get_guests_display(self):
+        return "; ".join(str(guest) for guest in self.guest.all())
+
+    class Meta:
+        ordering = ["date"]

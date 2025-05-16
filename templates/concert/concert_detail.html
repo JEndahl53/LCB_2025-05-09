@@ -1,0 +1,140 @@
+<!-- templates/concert/concert_detail.html -->
+<!-- this is the detail view for a concert -->
+{% extends "_base.html" %}
+
+{% block title %}
+  {{ concert.name }} | LCB Library
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <!-- breadcrumb navigation -->
+  <div class="container mx-auto px-4 py-8">
+  <nav class="flex mb-8" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <a href="{% url 'home' %}"
+           class="inline-flex items-center text-sm font-medium text-slate-700 hover:text-blue-600">
+          <i class="fas fa-home mr-2"></i>
+          Home
+        </a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <i class="fa-solid fa-chevron-right text-gray-400 mx-2"></i>
+          <a href="{% url 'concert_list' %}" class="text-sm font-medium text-slate-700 hover:text-blue-600">Concerts</a>
+        </div>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <i class="fa-solid fa-chevron-right text-gray-400 mx-2"></i>
+          <span class="text-sm font-medium text-gray-500">
+              {{ concert.name }}
+            </span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+{% endblock breadcrumbs %}
+
+{% block content %}
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header section -->
+    <div class="bg-white shadow rounded-lg overflow-hidden mb-8">
+      <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">
+          {{ concert.name }}
+        </h1>
+      </div>
+
+      <!-- Person information -->
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Left column -->
+          <div class="space-y-4">
+            <div>
+              <h2 class="text-lg font-semibold text-gray-700">Concert Information</h2>
+              <div class="mt-2 border-t border-gray-200 pt-2">
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="text-xl text-gray-900">{{ concert.name }}</div>
+                </div>
+                {% if concert.date %}
+                  <div class="text-sm text-gray-900">
+                    {{ concert.date }}
+                    {% if concert.time %}
+                      at {{ concert.time }}
+                    {% endif %}
+
+                  </div>
+                {% elif concert.time %}
+                  <!-- show the time only, if no date -->
+                  <div class="text-sm text-gray-900">{{ concert.time }}</div>
+                {% endif %}
+
+                {% if concert.venue %}
+                  <div class="text-sm text-gray-900">{{ concert.venue }}</div>
+                {% endif %}
+                {% if concert.conductor.exists %}
+                  <div class="text-sm text-gray-900">
+                    {% if concert.conductor.count > 1 %}
+                      Conductors:
+                    {% else %}
+                      Conductor:
+                    {% endif %}
+                    {{ concert.get_conductors_display }}
+                  </div>
+
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Right column (for additional info) -->
+          <div class="space-y-4">
+            <div>
+              <h2 class="text-lg font-semibold text-gray-700">Other Information</h2>
+              <div class="mt-2 border-t border-gray-200 pt-2">
+                <ul class="list-disc list-inside text-sm text-gray-900">
+                  {% if concert.guest.exists %}
+                    <div class="text-sm font-medium text-gray-500">
+                      {% if concert.guest.count > 1 %}
+                        Concert Guests
+                      {% else %}
+                        Concert Guest
+                      {% endif %}
+                    </div>
+                    <div class="text-sm text-gray-900 pl-4">{{ concert.get_guests_display }}</div>
+                  {% endif %}
+
+                  {% if concert.description %}
+                    <div class="text-sm font-medium text-gray-500">Description</div>
+                    <div class="text-sm text-gray-900">{{ concert.description }}</div>
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="flex space-x-3">
+    <a href="{% url 'concert_update' pk=concert.pk %}"
+       class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+      <i class="fas fa-edit mr-2"></i>
+      Edit
+    </a>
+    <a href="{% url 'concert_delete' pk=concert.pk %}"
+       class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+      <i class="fas fa-trash mr-2"></i>
+      Delete
+    </a>
+    <a href="{% url 'concert_list' %}"
+       class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+      <i class="fa-solid fa-list mr-2"></i>
+      Back to List
+    </a>
+  </div>
+  </div>
+{% endblock %}

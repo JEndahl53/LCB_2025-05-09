@@ -7,6 +7,7 @@
   {% load static %}
   <title>{% block title %}LCB Library{% endblock title %}</title>
   <link href="{% static 'css/output.css' %}" rel="stylesheet"/>
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
   <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css"/>
   <script src="{% static 'fontawesomefree/js/all.min.js' %}"></script>
 </head>
@@ -20,10 +21,10 @@
         alt="logo"
         class="ml-5 h-12 w-12 rounded-lg object-cover"
     />
-    <h2 class="ml-5 text-2xl text-white">LCB Library Project</h2>
+    <a href="{% url 'home' %}" class="ml-5 text-2xl text-white">LCB Library Project</a>
     <div class="ml-12 flex space-x-6">
       <!-- ToDo Activate these links -->
-      <span <a href="#" class="text-lg text-white opacity-70">Concerts</span>
+      <a href="{% url 'concert_list' %}" class="text-lg text-white opacity-70">Concerts</a>
       <span class="text-lg text-white opacity-70">Library</span>
     </div>
   </div>
