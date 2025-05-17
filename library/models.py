@@ -1,5 +1,5 @@
 # library/models.py
-
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 
@@ -53,6 +53,9 @@ class Genre(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("genre_detail", args=[str(self.id)])
 
     class Meta:
         verbose_name = "Genre"
@@ -114,59 +117,48 @@ class BorrowingOrganization(Organization):
         return reverse("borrowing_organization_detail", args=[str(self.id)])
 
 
+class PieceStatus(models.TextChoices):
+    NONE = "", "---------"
+    OWNED = "OWNED", "Owned"
+    RENTED = "RENTED", "Rented"
+    ON_LOAN = "ON_LOAN", "On Loan"
+    BORROWED = "BORROWED", "Borrowed"
+    ARCHIVED = "ARCHIVED", "Archived"
+
+
+class PieceDifficulty(models.TextChoices):
+    NONE = "", "---------"
+    EASY = "EASY", "Easy"
+    MOD_EASY = "MOD_EASY", "Moderately Easy"
+    MODERATE = "MODERATE", "Moderate"
+    MOD_DIFFICULT = "MOD_DIFFICULT", "Moderately Difficult"
+    DIFFICULT = "DIFFICULT", "Difficult"
+
+
 class Piece(models.Model):
-    # Status choices
-    STATUS_OWNED = "OWNED"
-    STATUS_RENTED = "RENTED"
-    STATUS_ON_LOAN = "ON_LOAN"
-    STATUS_BORROWED = "BORROWED"
-    STATUS_ARCHIVED = "ARCHIVED"
-    STATUS_CHOICES = [
-        ("", "----------"),
-        (STATUS_OWNED, "Owned"),
-        (STATUS_RENTED, "Rented"),
-        (STATUS_ON_LOAN, "On Loan"),
-        (STATUS_BORROWED, "Borrowed"),
-        (STATUS_ARCHIVED, "Archived"),
-    ]
-
-    # Difficulty choices
-    DIFFICULTY_EASY = "EASY"
-    DIFFICULTY_MOD_EASY = "MOD_EASY"
-    DIFFICULTY_MODERATE = "MODERATE"
-    DIFFICULTY_MOD_DIFFICULT = "MOD_DIFFICULT"
-    DIFFICULTY_DIFFICULT = "DIFFICULT"
-    DIFFICULTY_CHOICES = [
-        ("", "----------"),
-        (DIFFICULTY_EASY, "Easy"),
-        (DIFFICULTY_MOD_EASY, "Moderately Easy"),
-        (DIFFICULTY_MODERATE, "Moderate"),
-        (DIFFICULTY_MOD_DIFFICULT, "Moderately Difficult"),
-        (DIFFICULTY_DIFFICULT, "Difficult"),
-    ]
-
+    # Basic information
     title = models.CharField(max_length=200)
-    composer = models.ManyToManyField(
-        Composer,
-    )
-    arranger = models.ManyToManyField(
-        Arranger,
-    )
+    composer = models.ManyToManyField(Composer, blank=True)
+    arranger = models.ManyToManyField(Arranger, blank=True)
     genre = models.ManyToManyField(Genre, blank=True)
     publisher = models.ForeignKey(
         Publisher, on_delete=models.SET_NULL, blank=True, null=True
     )
     difficulty = models.CharField(
-        max_length=16,
-        choices=DIFFICULTY_CHOICES,
-        blank=True,
+        max_length=16, choices=PieceDifficulty.choices, blank=True, default=""
     )
+
+    # Status and location
     status = models.CharField(
         max_length=10,
-        choices=STATUS_CHOICES,
-        default=STATUS_OWNED,
+        choices=PieceStatus.choices,
+        default=PieceStatus.NONE,
         blank=True,
     )
+    location_drawer = models.CharField(max_length=100, blank=True)
+    location_number = models.CharField(max_length=100, blank=True)
+
+    # Rental info
     rental_organization = models.ForeignKey(
         RentalOrganization, on_delete=models.SET_NULL, blank=True, null=True
     )
@@ -175,18 +167,64 @@ class Piece(models.Model):
     rental_cost = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True
     )
+
+    # Loaned to info
     loaning_organization = models.ForeignKey(
         LoaningOrganization, on_delete=models.SET_NULL, blank=True, null=True
     )
     loaning_start_date = models.DateField(blank=True, null=True)
     loaning_end_date = models.DateField(blank=True, null=True)
+
+    # Borrowed from info
     borrowing_organization = models.ForeignKey(
         BorrowingOrganization, on_delete=models.SET_NULL, blank=True, null=True
     )
     borrowing_start_date = models.DateField(blank=True, null=True)
     borrowing_end_date = models.DateField(blank=True, null=True)
+
+    # Miscellaneous info
     copyright_date = models.DateField(blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
-    location_drawer = models.CharField(max_length=100, blank=True)
-    location_number = models.CharField(max_length=100, blank=True)
     notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def get_composers_display(self):
+        return "; ".join(str(composer) for composer in self.composer.all())
+
+    def get_arrangers_display(self):
+        return "; ".join(str(arranger) for arranger in self.arranger.all())
+
+    def get_genres_display(self):
+        return "; ".join(str(genre) for genre in self.genre.all())
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse("piece_detail", args=[str(self.id)])
+
+    def clean(self):
+        errors = {}
+
+        # could add date checks as well, but that may be overkill
+        if self.status == PieceStatus.RENTED and not self.rental_organization:
+            errors["rental_organization"] = (
+                "Rental organization is required for rented pieces."
+            )
+        if self.status == PieceStatus.ON_LOAN and not self.loaning_organization:
+            errors["loaning_organization"] = (
+                "Loaning organization is required for on loan pieces."
+            )
+        if self.status == PieceStatus.BORROWED and not self.borrowing_organization:
+            errors["borrowing_organization"] = (
+                "Borrowing organization is required for borrowed pieces."
+            )
+        if errors:
+            raise ValidationError(errors)
+
+    class Meta:
+        ordering = ["title"]
+        indexes = [
+            models.Index(fields=["title"]),
+        ]

@@ -9,31 +9,32 @@
 {% block breadcrumbs %}
   <!-- breadcrumb navigation -->
   <div class="container mx-auto px-4 py-8">
-  <nav class="flex mb-8" aria-label="Breadcrumb">
-    <ol class="inline-flex items-center space-x-1 md:space-x-3">
-      <li class="inline-flex items-center">
-        <a href="{% url 'home' %}"
-           class="inline-flex items-center text-sm font-medium text-slate-700 hover:text-blue-600">
-          <i class="fas fa-home mr-2"></i>
-          Home
-        </a>
-      </li>
-      <li>
-        <div class="flex items-center">
-          <i class="fa-solid fa-chevron-right text-gray-400 mx-2"></i>
-          <a href="{% url 'venue_list' %}" class="text-sm font-medium text-slate-700 hover:text-blue-600">Venues</a>
-        </div>
-      </li>
-      <li aria-current="page">
-        <div class="flex items-center">
-          <i class="fa-solid fa-chevron-right text-gray-400 mx-2"></i>
-          <span class="text-sm font-medium text-gray-500">
-              {{ venue.name }}
-            </span>
-        </div>
-      </li>
-    </ol>
-  </nav>
+    <nav class="flex mb-8" aria-label="Breadcrumb">
+      <ol class="inline-flex items-center space-x-1 md:space-x-3">
+        <li class="inline-flex items-center">
+          <a href="{% url 'home' %}"
+             class="inline-flex items-center text-sm font-medium text-slate-700 hover:text-blue-600">
+            <i class="fas fa-home mr-2"></i>
+            Home
+          </a>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <i class="fa-solid fa-chevron-right text-gray-400 mx-2"></i>
+            <a href="{% url 'venue_list' %}" class="text-sm font-medium text-slate-700 hover:text-blue-600">Venues</a>
+          </div>
+        </li>
+        <li aria-current="page">
+          <div class="flex items-center">
+            <i class="fa-solid fa-chevron-right text-gray-400 mx-2"></i>
+            <span class="text-sm font-medium text-gray-500">
+                {{ venue.name }}
+              </span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+  </div>
 {% endblock breadcrumbs %}
 
 {% block content %}
@@ -46,7 +47,7 @@
         </h1>
       </div>
 
-      <!-- Person information -->
+      <!-- Venue information -->
       <div class="p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Left column -->
@@ -55,55 +56,51 @@
               <h2 class="text-lg font-semibold text-gray-700">Venue Information</h2>
               <div class="mt-2 border-t border-gray-200 pt-2">
                 <div class="grid grid-cols-2 gap-2">
-                  <div class="text-sm font-medium text-gray-500">Venue Name</div>
-                  <div class="text-sm text-gray-900">{{ venue.name }}</div>
+                  <div class="text-sm font-medium text-gray-500">Venue Name: {{ venue.name }}</div>
                 </div>
                 {% if venue.address %}
-                  <div class="text-sm font-medium text-gray-500">Address</div>
-                  <div class="text-sm text-gray-900">{{ venue.address }}</div>
-                {% endif %}
-                {% if venue.city %}
-                  <div class="text-sm font-medium text-gray-500">City</div>
-                  <div class="text-sm text-gray-900">{{ venue.city }}</div>
-                {% endif %}
-                {% if venue.state %}
-                  <div class="text-sm font-medium text-gray-500">State</div>
-                  <div class="text-sm text-gray-900">{{ venue.state }}</div>
-                {% endif %}
-                {% if venue.zip_code %}
-                  <div class="text-sm font-medium text-gray-500">Zip Code</div>
-                  <div class="text-sm text-gray-900">{{ venue.zip_code }}</div>
+                  <div class="text-sm font-medium text-gray-500">Address: {{ venue.address }}</div>
+                  {% if venue.city or venue.state or venue.zip_code %}
+                    <div class="text-sm font-medium text-gray-500">
+                      {% if venue.city %}{{ venue.city }}{% endif %}
+                      {% if venue.city and venue.state %}, {% endif %}
+                      {% if venue.state %}{{ venue.state }}{% endif %}
+                      {% if venue.zip_code and (venue.city or venue.state) %} {% endif %}
+                      {% if venue.zip_code %}{{ venue.zip_code }}{% endif %}
+                    </div>
+                  {% endif %}
                 {% endif %}
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Right column (for additional info) -->
-        <div class="space-y-4">
-          <div>
-            <h2 class="text-lg font-semibold text-gray-700">Related Information</h2>
-            <div class="mt-2 border-t border-gray-200 pt-2">
-              <ul class="list-disc list-inside text-sm text-gray-900">
-                {% if venue.contact_name %}
-                  <div class="text-sm font-medium text-gray-500">Contact Name</div>
-                  <div class="text-sm text-gray-900">{{ venue.contact_name }}</div>
-                {% endif %}
-                {% if venue.phone %}
-                  <div class="text-sm font-medium text-gray-500">Phone</div>
-                  <div class="text-sm text-gray-900">{{ venue.phone }}</div>
-                {% endif %}
-                {% if venue.website %}
-                  <div class="text-sm font-medium text-gray-500">Website</div>
-                  <div class="text-sm text-gray-900"><a href="{{ venue.website }}" target="_blank"
-                                                        rel="noopener noreferrer">{{ venue.website }} <i
-                      class="fa-solid fa-external-link-alt text-xs ml-1"></i></a></div>
-                {% endif %}
-                {% if venue.notes %}
-                  <div class="text-sm font-medium text-gray-500">Notes</div>
-                  <div class="text-sm text-gray-900">{{ venue.notes }}</div>
-                {% endif %}
-              </ul>
+
+          <!-- Right column (for additional info) -->
+          <div class="space-y-4">
+            <div>
+              <h2 class="text-lg font-semibold text-gray-700">Related Information</h2>
+              <div class="mt-2 border-t border-gray-200 pt-2">
+                <ul class="list-disc list-inside text-sm text-gray-900">
+                  {% if venue.contact_name %}
+                    <div class="text-sm font-medium text-gray-500">Contact Name</div>
+                    <div class="text-sm text-gray-900">{{ venue.contact_name }}</div>
+                  {% endif %}
+                  {% if venue.phone %}
+                    <div class="text-sm font-medium text-gray-500">Phone</div>
+                    <div class="text-sm text-gray-900">{{ venue.phone }}</div>
+                  {% endif %}
+                  {% if venue.website %}
+                    <div class="text-sm font-medium text-gray-500">Website</div>
+                    <div class="text-sm text-gray-900"><a href="{{ venue.website }}" target="_blank"
+                                                          rel="noopener noreferrer">{{ venue.website }} <i
+                        class="fa-solid fa-external-link-alt text-xs ml-1"></i></a></div>
+                  {% endif %}
+                  {% if venue.notes %}
+                    <div class="text-sm font-medium text-gray-500">Notes</div>
+                    <div class="text-sm text-gray-900">{{ venue.notes }}</div>
+                  {% endif %}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -128,6 +125,5 @@
       <i class="fa-solid fa-list mr-2"></i>
       Back to List
     </a>
-  </div>
   </div>
 {% endblock %}

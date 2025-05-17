@@ -1,9 +1,7 @@
 # concerts/views.py
 # PersonBase views are in core/views.py
-from django.views.generic.detail import DetailView
 
 from core.forms import ConductorForm, GuestForm
-from library.models import PersonBase
 from django.views.generic import (
     DetailView,
     ListView,
