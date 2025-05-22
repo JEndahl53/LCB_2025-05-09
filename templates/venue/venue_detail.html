@@ -60,52 +60,47 @@
                 </div>
                 {% if venue.address %}
                   <div class="text-sm font-medium text-gray-500">Address: {{ venue.address }}</div>
-                  {% if venue.city or venue.state or venue.zip_code %}
-                    <div class="text-sm font-medium text-gray-500">
-                      {% if venue.city %}{{ venue.city }}{% endif %}
-                      {% if venue.city and venue.state %}, {% endif %}
-                      {% if venue.state %}{{ venue.state }}{% endif %}
-                      {% if venue.zip_code and (venue.city or venue.state) %} {% endif %}
-                      {% if venue.zip_code %}{{ venue.zip_code }}{% endif %}
-                    </div>
+                  {% if venue.formatted_location %}
+                    {{ venue.formatted_location }}
                   {% endif %}
+                  </div>
                 {% endif %}
-              </div>
             </div>
           </div>
+        </div>
 
 
-          <!-- Right column (for additional info) -->
-          <div class="space-y-4">
-            <div>
-              <h2 class="text-lg font-semibold text-gray-700">Related Information</h2>
-              <div class="mt-2 border-t border-gray-200 pt-2">
-                <ul class="list-disc list-inside text-sm text-gray-900">
-                  {% if venue.contact_name %}
-                    <div class="text-sm font-medium text-gray-500">Contact Name</div>
-                    <div class="text-sm text-gray-900">{{ venue.contact_name }}</div>
-                  {% endif %}
-                  {% if venue.phone %}
-                    <div class="text-sm font-medium text-gray-500">Phone</div>
-                    <div class="text-sm text-gray-900">{{ venue.phone }}</div>
-                  {% endif %}
-                  {% if venue.website %}
-                    <div class="text-sm font-medium text-gray-500">Website</div>
-                    <div class="text-sm text-gray-900"><a href="{{ venue.website }}" target="_blank"
-                                                          rel="noopener noreferrer">{{ venue.website }} <i
-                        class="fa-solid fa-external-link-alt text-xs ml-1"></i></a></div>
-                  {% endif %}
-                  {% if venue.notes %}
-                    <div class="text-sm font-medium text-gray-500">Notes</div>
-                    <div class="text-sm text-gray-900">{{ venue.notes }}</div>
-                  {% endif %}
-                </ul>
-              </div>
+        <!-- Right column (for additional info) -->
+        <div class="space-y-4">
+          <div>
+            <h2 class="text-lg font-semibold text-gray-700">Related Information</h2>
+            <div class="mt-2 border-t border-gray-200 pt-2">
+              <ul class="list-disc list-inside text-sm text-gray-900">
+                {% if venue.contact_name %}
+                  <div class="text-sm font-medium text-gray-500">Contact Name</div>
+                  <div class="text-sm text-gray-900">{{ venue.contact_name }}</div>
+                {% endif %}
+                {% if venue.phone %}
+                  <div class="text-sm font-medium text-gray-500">Phone</div>
+                  <div class="text-sm text-gray-900">{{ venue.phone }}</div>
+                {% endif %}
+                {% if venue.website %}
+                  <div class="text-sm font-medium text-gray-500">Website</div>
+                  <div class="text-sm text-gray-900"><a href="{{ venue.website }}" target="_blank"
+                                                        rel="noopener noreferrer">{{ venue.website }} <i
+                      class="fa-solid fa-external-link-alt text-xs ml-1"></i></a></div>
+                {% endif %}
+                {% if venue.notes %}
+                  <div class="text-sm font-medium text-gray-500">Notes</div>
+                  <div class="text-sm text-gray-900">{{ venue.notes }}</div>
+                {% endif %}
+              </ul>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
   </div>
 
   <!-- Action buttons -->

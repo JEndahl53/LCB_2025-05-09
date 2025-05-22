@@ -49,6 +49,22 @@ class Venue(models.Model):
     def get_absolute_url(self):
         return reverse("venue_detail", args=[str(self.id)])
 
+    def formatted_location(self):
+        parts = []
+        if self.city:
+            parts.append(self.city)
+        if self.state:
+            if self.city:
+                parts[-1] += f", {self.state}"
+            else:
+                parts.append(self.state)
+        if self.zip_code:
+            if self.state or self.city:
+                parts[-1] += f" {self.zip_code}"
+            else:
+                parts.append(self.zip_code)
+        return ", ".join(parts)
+
     class Meta:
         ordering = ["name"]
 

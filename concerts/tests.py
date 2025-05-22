@@ -423,7 +423,7 @@ class VenueViewsTest(TestCase):
         new_venue = Venue.objects.get(name="Carnegie Hall")
         self.assertEqual(new_venue.city, "New York")
         # Check redirect after create
-        self.assertRedirects(response, reverse("venue_list")
+        self.assertRedirects(response, reverse("venue_list"))
 
     def test_venue_update_view(self):
         """Test that update view returns correct status code and template"""
@@ -473,7 +473,11 @@ class VenueViewsTest(TestCase):
         }
         response = self.client.post(self.create_url, data)
         self.assertEqual(response.status_code, 200)  # Stays on the form page
-        self.assertFormError(response, "form", "name", "This field is required.")
+        self.assertIn("form", response.context)
+        form = response.context["form"]
+        self.assertTrue(form.is_bound)
+        self.assertTrue("name" in form.errors)
+        self.assertEqual(form.errors["name"], ["This field is required."])
 
 
 class VenueUrlsTest(TestCase):
