@@ -310,13 +310,13 @@ class Piece(models.Model):
             raise ValidationError(errors)
 
     def get_composers_display(self):
-        return "; ".join(str(composer) for composer in self.composer.all())
+        return "; ".join([composer.get_sort_name() for composer in self.composer.all()])
 
     def get_arrangers_display(self):
-        return "; ".join(str(arranger) for arranger in self.arranger.all())
+        return "; ".join([arranger.get_sort_name() for arranger in self.arranger.all()])
 
     def get_genres_display(self):
-        return "; ".join(str(genre) for genre in self.genre.all())
+        return ", ".join(str(genre) for genre in self.genre.all())
 
     def __str__(self):
         return self.title

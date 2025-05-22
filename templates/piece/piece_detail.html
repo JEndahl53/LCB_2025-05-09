@@ -25,7 +25,7 @@
       <li>
         <div class="flex items-center">
           <i class="fa-solid fa-chevron-right text-gray-400 mx-2"></i>
-          <a href="#" class="text-sm font-medium text-slate-700 hover:text-blue-600">Library</a>
+          <a href="{% url 'piece_list' %}" class="text-sm font-medium text-slate-700 hover:text-blue-600">Library</a>
         </div>
       </li>
       <li aria-current="page">
@@ -68,23 +68,26 @@
                 <div class="grid grid-cols-2 gap-2">
                   <div class="text-sm font-medium text-gray-500">Title: {{ piece.title }}</div>
                 </div>
-                {% if piece.composer %}
-                  <div class="text-sm font-medium text-gray-500">Composer: {{ piece.composer }}</div>
+                {% if piece.composer.exists %}
+                  <div class="text-sm font-medium text-gray-500">
+                    {{ piece.get_composers_display }}</div>
                 {% endif %}
-                {% if piece.arranger %}
-                  <div class="text-sm font-medium text-gray-500">Arranger: {{ piece.arranger }}</div>
+                {% if piece.arranger.exists %}
+                  <div class="text-sm font-medium text-gray-500">Arranger: {{ piece.get_arrangers_display }}</div>
                 {% endif %}
-                {% if piece.genre %}
-                  <div class="text-sm font-medium text-gray-500">Genre: {{ piece.genre }}</div>
+                {% if piece.genre.exists %}
+                  <div class="text-sm font-medium text-gray-500">
+                    {% if piece.genre.count > 1 %}Genres{% else %}Genre{% endif %}:
+                    {{ piece.get_genres_display }}</div>
                 {% endif %}
                 {% if piece.publisher %}
                   <div class="text-sm font-medium text-gray-500">Publisher: {{ piece.publisher }}</div>
                 {% endif %}
                 {% if piece.difficulty %}
-                  <div class="text-sm font-medium text-gray-500">Difficulty: {{ piece.difficulty }}</div>
+                  <div class="text-sm font-medium text-gray-500">Difficulty: {{ piece.get_difficulty_display }}</div>
                 {% endif %}
                 {% if piece.status %}
-                  <div class="text-sm font-medium text-gray-500">Status: {{ piece.status }}</div>
+                  <div class="text-sm font-medium text-gray-500">Status: {{ piece.get_status_display }}</div>
                 {% endif %}
                 {% if piece.location_drawer %}
                   <div class="text-sm font-medium text-gray-500">Location: {{ piece.location_drawer }}</div>
@@ -136,9 +139,24 @@
     </div>
   </div>
   <!-- Action buttons -->
-  <div class="flex justify-end space-x-4">
-    <a href="{% url 'piece_edit' piece.id %}" class="btn btn-primary">Edit</a>
-    <a href="{% url 'piece_delete' piece.id %}" class="btn btn-danger">Delete</a>
+  <div class="flex space-x-3">
+    <a href="{% url 'piece_update' pk=piece.pk %}"
+       class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+      <i class="fas fa-edit mr-2"></i>
+      Edit
+    </a>
+    <a href="{% url 'piece_delete' pk=piece.pk %}"
+       class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+      <i class="fas fa-trash mr-2"></i>
+      Delete
+    </a>
+    <a href="{% url 'piece_list' %}"
+       class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+      <i class="fa-solid fa-list mr-2"></i>
+      Back to List
+    </a>
   </div>
+  </div>
+
 {% endblock content %}
 
