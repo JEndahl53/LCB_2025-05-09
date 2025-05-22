@@ -35,12 +35,12 @@ class Composer(PersonBase):
         return reverse("composer_detail", args=[str(self.id)])
 
     class Meta:
+        ordering = ["last_name", "first_name"]
         verbose_name = "Composer"
         verbose_name_plural = "Composers"
 
 
 class Arranger(PersonBase):
-    pass
 
     def get_absolute_url(self):
         return reverse("arranger_detail", args=[str(self.id)])
@@ -260,6 +260,7 @@ class Piece(models.Model):
     # Miscellaneous info
     copyright_date = models.DateField(blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
+    duration = models.DurationField(blank=True, null=True)
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

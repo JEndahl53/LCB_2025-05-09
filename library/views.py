@@ -7,6 +7,7 @@ from core.forms import (
     RentalOrganizationForm,
     LoaningOrganizationForm,
     BorrowingOrganizationForm,
+    PieceForm,
 )
 from django.views.generic import (
     CreateView,
@@ -51,7 +52,7 @@ class ComposerDetailView(PersonBaseDetailView):
 
 class ComposerCreateView(PersonBaseCreateView):
     model = Composer
-    class_form = ComposerForm
+    form_class = ComposerForm
     template_name = "people/person_form.html"
     success_url = reverse_lazy("composer_list")
 
@@ -64,9 +65,8 @@ class ComposerCreateView(PersonBaseCreateView):
 
 class ComposerUpdateView(PersonBaseUpdateView):
     model = Composer
-    class_form = ComposerForm
+    form_class = ComposerForm
     template_name = "people/person_form.html"
-    success_url = reverse_lazy("composer_list")
 
     def get_model_verbose_name(self):
         return "Composer"
@@ -90,7 +90,7 @@ class ArrangerDetailView(PersonBaseDetailView):
 
 class ArrangerCreateView(PersonBaseCreateView):
     model = Arranger
-    class_form = ArrangerForm
+    form_class = ArrangerForm
     template_name = "people/person_form.html"
     success_url = reverse_lazy("arranger_list")
 
@@ -103,7 +103,7 @@ class ArrangerCreateView(PersonBaseCreateView):
 
 class ArrangerUpdateView(PersonBaseUpdateView):
     model = Arranger
-    class_form = ArrangerForm
+    form_class = ArrangerForm
     template_name = "people/person_form.html"
     success_url = reverse_lazy("arranger_list")
 

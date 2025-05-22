@@ -1,0 +1,144 @@
+<!-- templates/piece/piece_detail.html -->
+{% extends "_base.html" %}
+
+{% block title %}
+  {% if piece.title %}
+    {{ piece.title }}
+  {% else %}
+    Piece Detail
+  {% endif %}
+  | LCB Library
+{% endblock title %}
+
+{% block breadcrumbs %}
+  <!-- breadcrumb navigation -->
+  <div class="container mx-auto px-4 py-8">
+  <nav class="flex mb-8" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <a href="{% url 'home' %}"
+           class="inline-flex items-center text-sm font-medium text-slate-700 hover:text-blue-600">
+          <i class="fas fa-home mr-2"></i>
+          Home
+        </a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <i class="fa-solid fa-chevron-right text-gray-400 mx-2"></i>
+          <a href="#" class="text-sm font-medium text-slate-700 hover:text-blue-600">Library</a>
+        </div>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <i class="fa-solid fa-chevron-right text-gray-400 mx-2"></i>
+          <span class="text-sm font-medium text-gray-500">
+              {% if piece.title %}
+                {{ piece.title }}
+              {% else %}
+                Piece Detail
+              {% endif %}
+            </span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+{% endblock breadcrumbs %}
+
+{% block content %}
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header section -->
+    <div class="bg-white shadow rounded-lg overflow-hidden mb-8">
+      <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">
+          {% if piece.title %}
+            {{ piece.title }}
+          {% else %}
+            Piece Detail
+          {% endif %}
+        </h1>
+      </div>
+      <!-- Piece information -->
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Left column -->
+          <div class="space-y-4">
+            <div>
+              <h2 class="text-lg font-semibold text-gray-700">Piece Information</h2>
+              <div class="mt-2 border-t border-gray-200 pt-2">
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="text-sm font-medium text-gray-500">Title: {{ piece.title }}</div>
+                </div>
+                {% if piece.composer %}
+                  <div class="text-sm font-medium text-gray-500">Composer: {{ piece.composer }}</div>
+                {% endif %}
+                {% if piece.arranger %}
+                  <div class="text-sm font-medium text-gray-500">Arranger: {{ piece.arranger }}</div>
+                {% endif %}
+                {% if piece.genre %}
+                  <div class="text-sm font-medium text-gray-500">Genre: {{ piece.genre }}</div>
+                {% endif %}
+                {% if piece.publisher %}
+                  <div class="text-sm font-medium text-gray-500">Publisher: {{ piece.publisher }}</div>
+                {% endif %}
+                {% if piece.difficulty %}
+                  <div class="text-sm font-medium text-gray-500">Difficulty: {{ piece.difficulty }}</div>
+                {% endif %}
+                {% if piece.status %}
+                  <div class="text-sm font-medium text-gray-500">Status: {{ piece.status }}</div>
+                {% endif %}
+                {% if piece.location_drawer %}
+                  <div class="text-sm font-medium text-gray-500">Location: {{ piece.location_drawer }}</div>
+                {% endif %}
+                {% if piece.location_number %}
+                  <div class="text-sm font-medium text-gray-500">Location Number: {{ piece.location_number }}</div>
+                {% endif %}
+                {% if piece.copyright_date %}
+                  <div class="text-sm font-medium text-gray-500">Copyright Date: {{ piece.copyright_date }}</div>
+                {% endif %}
+                {% if piece.copyright_date %}
+                  <div class="text-sm font-medium text-gray-500">Copyright Date: {{ piece.copyright_date }}</div>
+                {% endif %}
+                {% if piece.purchase_date %}
+                  <div class="text-sm font-medium text-gray-500">Purchase Date: {{ piece.purchase_date }}</div>
+                {% endif %}
+                {% if piece.duration %}
+                  <div class="text-sm font-medium text-gray-500">Duration: {{ piece.duration }}</div>
+                {% endif %}
+                {% if piece.notes %}
+                  <div class="text-sm font-medium text-gray-500">Notes: {{ piece.notes }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <!-- Right column (for additional info) -->
+          <div class="space-y-4">
+            <div>
+              <h2 class="text-lg font-semibold text-gray-700">Related Information</h2>
+              <div class="mt-2 border-t border-gray-200 pt-2">
+                <ul class="list-disc list-inside text-sm text-gray-900">
+                  {% if piece.performances %}
+                    <div class="text-sm font-medium text-gray-500">
+                      {% if piece.performances.count > 1 %}
+                        Performances
+                      {% else %}
+                        Performance
+                      {% endif %}
+                    </div>
+                  {% else %}
+                    <p class="text-gray-500">No performances found.</p>
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Action buttons -->
+  <div class="flex justify-end space-x-4">
+    <a href="{% url 'piece_edit' piece.id %}" class="btn btn-primary">Edit</a>
+    <a href="{% url 'piece_delete' piece.id %}" class="btn btn-danger">Delete</a>
+  </div>
+{% endblock content %}
+

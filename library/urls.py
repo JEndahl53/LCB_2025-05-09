@@ -32,6 +32,11 @@ from .views import (
     BorrowingOrganizationCreateView,
     BorrowingOrganizationUpdateView,
     BorrowingOrganizationDeleteView,
+    PieceListView,
+    PieceDetailView,
+    PieceCreateView,
+    PieceUpdateView,
+    PieceDeleteView,
 )
 
 urlpatterns = [
@@ -147,4 +152,10 @@ urlpatterns = [
         BorrowingOrganizationDeleteView.as_view(),
         name="borrowing_organization_delete",
     ),
+    # Piece URLs
+    path("", PieceListView.as_view(), name="piece_list"),
+    path("<int:pk>/", PieceDetailView.as_view(), name="piece_detail"),
+    path("create/", PieceCreateView.as_view(), name="piece_create"),
+    path("<int:pk>/update/", PieceUpdateView.as_view(), name="piece_update"),
+    path("<int:pk>/delete/", PieceDeleteView.as_view(), name="piece_delete"),
 ]
