@@ -2,6 +2,8 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 
 # Create your models here.
@@ -78,11 +80,90 @@ class Publisher(models.Model):
         ordering = ["name"]
 
 
+# New link between Organization and Piece
+class PieceOrganizationRelationship(models.Model):
+    """Manages the relationship between organizations and pieces."""
+
+    # Relationship type constants
+    RENTED = "RENTED"
+    ON_LOAN = "ON_LOAN"
+    BORROWED = "BORROWED"
+
+    RELATIONSHIP_TYPES = [
+        (RENTED, "Rented"),
+        (ON_LOAN, "On Loan"),
+        (BORROWED, "Borrowed"),
+    ]
+    piece = models.OneToOneField(
+        "Piece", on_delete=models.CASCADE, related_name="organization_relationship"
+    )
+    relationship_type = models.CharField(max_length=10, choices=RELATIONSHIP_TYPES)
+    # Generic foreign key to any organization type
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    organization = GenericForeignKey("content_type", "object_id")
+    # Common fields for all relationship types
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
+    # Field specific to rental relationship
+    rental_cost = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        help_text="Only applicable to RENTED relationships.",
+    )
+
+    # Organization type mapping
+    ORGANIZATION_TYPE_MAP = {
+        RENTED: ("library.models.Rental_Organization", "a Rental Organization"),
+        ON_LOAN: ("library.models.Loaning_Organization", "a Loaning Organization"),
+        BORROWED: ("library.models.Borrowing_Organization", "a Borrowing Organization"),
+    }
+
+    def __str__(self):
+        return f"{self.piece.title} - {self.get_relationship_type_display()} from {self.organization}"
+
+    def clean(self):
+        errors = {}
+        self._validate_organization_type(errors)
+        self._validate_rental_cost(errors)
+
+        if errors:
+            raise ValidationError(errors)
+
+    def _validate_organization_type(self, errors):
+        # Validate the organization type matches the relationship type
+        org_class_path, org_name = self.ORGANIZATION_TYPE_MAP.get(
+            self.relationship_type, (None, None)
+        )
+        if org_class_path:
+            from django.apps import apps
+
+            app_label, model_name = org_class_path.rsplit(".", 1)
+            org_class = apps.get_model(app_label, model_name)
+            if not isinstance(self.organization, org_class):
+                errors["organization"] = [
+                    f"Organization must be a {org_name} for {self.get_relationship_type_display()} relationships."
+                ]
+
+    def _validate_rental_cost(self, errors):
+        # Only rental relationships should have rental cost
+        if self.relationship_type != self.RENTED and self.rental_cost:
+            errors["rental_cost"] = (
+                "Rental cost is only applicable to RENTED relationships."
+            )
+
+
+"""The Organization models are for the rental, loaning, and borrowing organizations."""
+
+
 class Organization(models.Model):
     name = models.CharField(max_length=100)
-    contact_name = models.CharField(max_length=100)
+    contact_name = models.CharField(max_length=100, blank=True)
     contact_email = models.EmailField(blank=True)
     contact_phone = models.CharField(max_length=100, blank=True)
+    website = models.URLField(blank=True)
     notes = models.TextField(blank=True)
 
     def __str__(self):
@@ -96,22 +177,40 @@ class Organization(models.Model):
         abstract = True
 
 
-class RentalOrganization(Organization):
-    pass
+class Rental_Organization(Organization):
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Rental Organizations"
+        verbose_name = "Rental Organization"
+        ordering = ["name"]
 
     def get_absolute_url(self):
         return reverse("rental_organization_detail", args=[str(self.id)])
 
 
-class LoaningOrganization(Organization):
-    pass
+class Loaning_Organization(Organization):
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Loaning Organizations"
+        verbose_name = "Loaning Organization"
+        ordering = ["name"]
 
     def get_absolute_url(self):
         return reverse("loaning_organization_detail", args=[str(self.id)])
 
 
-class BorrowingOrganization(Organization):
-    pass
+class Borrowing_Organization(Organization):
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Borrowing Organizations"
+        verbose_name = "Borrowing Organization"
+        ordering = ["name"]
 
     def get_absolute_url(self):
         return reverse("borrowing_organization_detail", args=[str(self.id)])
@@ -158,36 +257,56 @@ class Piece(models.Model):
     location_drawer = models.CharField(max_length=100, blank=True)
     location_number = models.CharField(max_length=100, blank=True)
 
-    # Rental info
-    rental_organization = models.ForeignKey(
-        RentalOrganization, on_delete=models.SET_NULL, blank=True, null=True
-    )
-    rental_start_date = models.DateField(blank=True, null=True)
-    rental_end_date = models.DateField(blank=True, null=True)
-    rental_cost = models.DecimalField(
-        max_digits=10, decimal_places=2, blank=True, null=True
-    )
-
-    # Loaned to info
-    loaning_organization = models.ForeignKey(
-        LoaningOrganization, on_delete=models.SET_NULL, blank=True, null=True
-    )
-    loaning_start_date = models.DateField(blank=True, null=True)
-    loaning_end_date = models.DateField(blank=True, null=True)
-
-    # Borrowed from info
-    borrowing_organization = models.ForeignKey(
-        BorrowingOrganization, on_delete=models.SET_NULL, blank=True, null=True
-    )
-    borrowing_start_date = models.DateField(blank=True, null=True)
-    borrowing_end_date = models.DateField(blank=True, null=True)
-
     # Miscellaneous info
     copyright_date = models.DateField(blank=True, null=True)
     purchase_date = models.DateField(blank=True, null=True)
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def clean(self):
+        errors = {}
+        # Check relationship exists if status requires it
+        if self.status in [
+            PieceStatus.RENTED,
+            PieceStatus.ON_LOAN,
+            PieceStatus.BORROWED,
+        ]:
+            try:
+                relationship = self.organization_relationship
+                # Verify relationship type matches status
+                if (
+                    self.status == PieceStatus.RENTED
+                    and relationship.relationship_type != PieceStatus.RENTED
+                ):
+                    errors["status"] = (
+                        "Organization relationship type must be RENTED for RENTED status."
+                    )
+                if (
+                    self.status == PieceStatus.ON_LOAN
+                    and relationship.relationship_type != PieceStatus.ON_LOAN
+                ):
+                    errors["status"] = (
+                        "Organization relationship type must be ON_LOAN for ON_LOAN status."
+                    )
+                if (
+                    self.status == PieceStatus.BORROWED
+                    and relationship.relationship_type != PieceStatus.BORROWED
+                ):
+                    errors["status"] = (
+                        "Organization relationship type must be BORROWED for BORROWED status."
+                    )
+            except PieceOrganizationRelationship.DoesNotExist:
+                errors["status"] = (
+                    f"Pieces with {self.get_status_display()} status require an organization relationship."
+                )
+        # Conversely, if not a status that requires a relationship, shouldn't have one
+        elif hasattr(self, "organization_relationship"):
+            errors["status"] = (
+                f"Pieces with {self.get_status_display()} status should not have an organization relationship."
+            )
+        if errors:
+            raise ValidationError(errors)
 
     def get_composers_display(self):
         return "; ".join(str(composer) for composer in self.composer.all())
@@ -203,25 +322,6 @@ class Piece(models.Model):
 
     def get_absolute_url(self):
         return reverse("piece_detail", args=[str(self.id)])
-
-    def clean(self):
-        errors = {}
-
-        # could add date checks as well, but that may be overkill
-        if self.status == PieceStatus.RENTED and not self.rental_organization:
-            errors["rental_organization"] = (
-                "Rental organization is required for rented pieces."
-            )
-        if self.status == PieceStatus.ON_LOAN and not self.loaning_organization:
-            errors["loaning_organization"] = (
-                "Loaning organization is required for on loan pieces."
-            )
-        if self.status == PieceStatus.BORROWED and not self.borrowing_organization:
-            errors["borrowing_organization"] = (
-                "Borrowing organization is required for borrowed pieces."
-            )
-        if errors:
-            raise ValidationError(errors)
 
     class Meta:
         ordering = ["title"]

@@ -1,0 +1,67 @@
+<!-- templates/organizations/organization_list.html -->
+<!-- This form shows a list view of the organization type -->
+{% extends "_base.html" %}
+{% block title %}
+  {{ view.get_model_verbose_name_plural }} | LCB Library
+{% endblock %}
+
+{% block content %}
+  <div class="container mx-auto px-4 py-8">
+    <div class="mb-6 flex items-center justify-between">
+      <h1 class="text-3xl font-bold text-slate-800">
+        {{ view.get_model_verbose_name_plural }}
+      </h1>
+      <a
+          href="{% url view.get_model_name_for_url|add:'_create' %}"
+          class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <i class="fas fa-plus mr-2"></i>
+      </a>
+    </div>
+
+    <div class="overflow-x-auto rounded-lg shadow">
+      <table class="w-full table-auto border-collapse bg-white">
+        <thead>
+        <tr class="bg-slate-100 text-left text-sm font-medium text-slate-700">
+          <th class="border-b p-4">Name</th>
+          <th class="border-b p-4 text-right">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for organization in organizations %}
+          <tr class="border-b hover:bg-slate-50">
+            <td class="p-4">
+              <a
+                  href="{{ organization.get_absolute_url }}"
+                  class="font-medium text-blue-600 hover:underline">
+                {{ organization.name }}
+              </a>
+            </td>
+            <td class="p-4 text-right">
+              <div class="flex justify-end space-x-3">
+                <a
+                    href="{% url view.get_model_name_for_url|add:'_update' organization.id %}"
+                    class="text-amber-600 hover:text-amber-800"
+                    title="Edit">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a
+                    href="{% url view.get_model_name_for_url|add:'_delete' organization.id %}"
+                    class="text-red-600 hover:text-red-800"
+                    title="Delete">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="2" class="p-4 text-center text-slate-500">
+              No {{ view.get_model_verbose_name_plural }} found.
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

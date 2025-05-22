@@ -17,6 +17,21 @@ from .views import (
     ArrangerCreateView,
     ArrangerUpdateView,
     ArrangerDeleteView,
+    RentalOrganizationListView,
+    RentalOrganizationDetailView,
+    RentalOrganizationCreateView,
+    RentalOrganizationUpdateView,
+    RentalOrganizationDeleteView,
+    LoaningOrganizationListView,
+    LoaningOrganizationDetailView,
+    LoaningOrganizationCreateView,
+    LoaningOrganizationUpdateView,
+    LoaningOrganizationDeleteView,
+    BorrowingOrganizationListView,
+    BorrowingOrganizationDetailView,
+    BorrowingOrganizationCreateView,
+    BorrowingOrganizationUpdateView,
+    BorrowingOrganizationDeleteView,
 )
 
 urlpatterns = [
@@ -53,5 +68,83 @@ urlpatterns = [
         "arrangers/<int:pk>/delete/",
         ArrangerDeleteView.as_view(),
         name="arranger_delete",
+    ),
+    # Rental Organizations URLs
+    path(
+        "rental_organizations/",
+        RentalOrganizationListView.as_view(),
+        name="rental_organization_list",
+    ),
+    path(
+        "rental_organizations/<int:pk>/",
+        RentalOrganizationDetailView.as_view(),
+        name="rental_organization_detail",
+    ),
+    path(
+        "rental_organizations/create/",
+        RentalOrganizationCreateView.as_view(),
+        name="rental_organization_create",
+    ),
+    path(
+        "rental_organizations/<int:pk>/update/",
+        RentalOrganizationUpdateView.as_view(),
+        name="rental_organization_update",
+    ),
+    path(
+        "rental_organizations/<int:pk>/delete/",
+        RentalOrganizationDeleteView.as_view(),
+        name="rental_organization_delete",
+    ),
+    # Loaning Organizations URLs
+    path(
+        "loaning_organizations/",
+        LoaningOrganizationListView.as_view(),
+        name="loaning_organization_list",
+    ),
+    path(
+        "loaning_organizations/<int:pk>/",
+        LoaningOrganizationDetailView.as_view(),
+        name="loaning_organization_detail",
+    ),
+    path(
+        "loaning_organizations/create/",
+        LoaningOrganizationCreateView.as_view(),
+        name="loaning_organization_create",
+    ),
+    path(
+        "loaning_organizations/<int:pk>/update/",
+        LoaningOrganizationUpdateView.as_view(),
+        name="loaning_organization_update",
+    ),
+    path(
+        "loaning_organizations/<int:pk>/delete/",
+        LoaningOrganizationDeleteView.as_view(),
+        name="loaning_organization_delete",
+    ),
+    # Borrowing Organizations URLs
+    path(
+        "borrowing_organizations/",
+        BorrowingOrganizationListView.as_view(),
+        name="borrowing_organization_list",
+    ),
+    path(
+        "borrowing_organizations/<int:pk>/",
+        BorrowingOrganizationDetailView.as_view(),
+        name="borrowing_organization_detail",
+    ),
+    path(
+        "borrowing_organizations/create/",
+        BorrowingOrganizationCreateView.as_view(),
+        name="borrowing_organization_create",
+    ),
+    path(
+        "borrowing_organizations/<int:pk>/update/",
+        BorrowingOrganizationUpdateView.as_view(),
+        name="borrowing_organization_update",
+    ),
+    path(
+        "borrowing_organizations/<int:pk>/delete/",
+        BorrowingOrganizationDeleteView.as_view(),
+        name="borrowing_organization_delete",
     ),
 ]

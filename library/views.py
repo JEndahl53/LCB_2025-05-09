@@ -1,7 +1,13 @@
 # library/views.py
 # PersonBase views are in core/views.py
 
-from core.forms import ComposerForm, ArrangerForm
+from core.forms import (
+    ComposerForm,
+    ArrangerForm,
+    RentalOrganizationForm,
+    LoaningOrganizationForm,
+    BorrowingOrganizationForm,
+)
 from django.views.generic import (
     CreateView,
     ListView,
@@ -9,7 +15,15 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from .models import Composer, Arranger, Genre, Piece
+from .models import (
+    Composer,
+    Arranger,
+    Genre,
+    Piece,
+    Rental_Organization,
+    Loaning_Organization,
+    Borrowing_Organization,
+)
 from .forms import GenreForm, PieceForm
 from core.views import (
     PersonBaseDetailView,
@@ -17,6 +31,11 @@ from core.views import (
     PersonBaseCreateView,
     PersonBaseUpdateView,
     PersonBaseDeleteView,
+    OrganizationBaseDetailView,
+    OrganizationBaseListView,
+    OrganizationBaseCreateView,
+    OrganizationBaseUpdateView,
+    OrganizationBaseDeleteView,
 )
 from django.urls import reverse_lazy
 
@@ -158,3 +177,135 @@ class PieceDeleteView(DeleteView):
     model = Piece
     template_name = "piece/piece_confirm_delete.html"
     success_url = reverse_lazy("piece_list")
+
+
+# Rental Organization views
+class RentalOrganizationListView(OrganizationBaseListView):
+    model = Rental_Organization
+
+
+class RentalOrganizationDetailView(OrganizationBaseDetailView):
+    model = Rental_Organization
+
+
+class RentalOrganizationCreateView(OrganizationBaseCreateView):
+    model = Rental_Organization
+    class_form = RentalOrganizationForm
+    template_name = "organizations/organization_form.html"
+    success_url = reverse_lazy("rental_organization_list")
+
+    def get_model_verbose_name(self):
+        return "Rental Organization"
+
+    def get_model_name_for_url(self):
+        return "rental_organization"
+
+
+class RentalOrganizationUpdateView(OrganizationBaseUpdateView):
+    model = Rental_Organization
+    class_form = RentalOrganizationForm
+    template_name = "organizations/organization_form.html"
+    success_url = reverse_lazy("rental_organization_list")
+
+    def get_model_verbose_name(self):
+        return "Rental Organization"
+
+    def get_model_name_for_url(self):
+        return "rental_organization"
+
+
+class RentalOrganizationDeleteView(OrganizationBaseDeleteView):
+    model = Rental_Organization
+    success_url = reverse_lazy("rental_organization_list")
+
+
+# Loaning Organization views
+class LoaningOrganizationListView(OrganizationBaseListView):
+    model = Loaning_Organization
+
+
+class LoaningOrganizationDetailView(OrganizationBaseDetailView):
+    model = Loaning_Organization
+    template_name = "organizations/organization_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["organization"] = self.object
+        context["get_model_verbose_name_plural"] = "Loaning Organizations"
+        context["get_model_verbose_name"] = "Loaning Organization"
+
+        return context
+
+
+class LoaningOrganizationCreateView(OrganizationBaseCreateView):
+    model = Loaning_Organization
+    class_form = LoaningOrganizationForm
+    template_name = "organizations/organization_form.html"
+    success_url = reverse_lazy("loaning_organization_list")
+
+    def get_model_verbose_name(self):
+        return "Loaning Organization"
+
+    def get_model_name_for_url(self):
+        return "loaning_organization"
+
+
+class LoaningOrganizationUpdateView(OrganizationBaseUpdateView):
+    model = Loaning_Organization
+    class_form = LoaningOrganizationForm
+    template_name = "organizations/organization_form.html"
+    success_url = reverse_lazy("loaning_organization_list")
+
+    def get_model_verbose_name(self):
+        return "Loaning Organization"
+
+    def get_model_name_for_url(self):
+        return "loaning_organization"
+
+
+class LoaningOrganizationDeleteView(OrganizationBaseDeleteView):
+    model = Loaning_Organization
+    success_url = reverse_lazy("loaning_organization_list")
+
+    def get_model_verbose_name_plural(self):
+        return "Loaning Organizations"
+
+
+# Borrowing Organization views
+class BorrowingOrganizationListView(OrganizationBaseListView):
+    model = Borrowing_Organization
+
+
+class BorrowingOrganizationDetailView(OrganizationBaseDetailView):
+    model = Borrowing_Organization
+
+
+class BorrowingOrganizationCreateView(OrganizationBaseCreateView):
+    model = Borrowing_Organization
+    class_form = BorrowingOrganizationForm
+    template_name = "organizations/organization_form.html"
+    success_url = reverse_lazy("borrowing_organization_list")
+
+    def get_model_verbose_name(self):
+        return "Borrowing Organization"
+
+    def get_model_name_for_url(self):
+        return "borrowing_organization"
+
+
+class BorrowingOrganizationUpdateView(OrganizationBaseUpdateView):
+    model = Borrowing_Organization
+    class_form = BorrowingOrganizationForm
+    template_name = "organizations/organization_form.html"
+    success_url = reverse_lazy("borrowing_organization_list")
+
+    def get_model_verbose_name(self):
+        return "Borrowing Organization"
+
+    def get_model_name_for_url(self):
+        return "borrowing_organization"
+
+
+class BorrowingOrganizationDeleteView(OrganizationBaseDeleteView):
+    model = Borrowing_Organization
+    success_url = reverse_lazy("borrowing_organization_list")

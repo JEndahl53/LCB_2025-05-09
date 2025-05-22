@@ -88,3 +88,88 @@ class PersonBaseDeleteView(DeleteView):
 
     def get_model_name_for_url(self):
         return self.model.__name__.lower()
+
+
+class OrganizationBaseListView(ListView):
+    template_name = "organizations/organization_list.html"  # generic template
+    context_object_name = "organizations"
+    paginate_by = 20
+
+    def get_model_name_for_url(self):
+        return self.model.__name__.lower()
+
+    def get_model_verbose_name_plural(self):
+        return self.model._meta.verbose_name_plural
+
+    # Must specify a model in subclasses
+
+
+class OrganizationBaseDetailView(DetailView):
+    template_name = "organizations/organization_detail.html"  # generic template
+    context_object_name = "organizations"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Get the model name for URL construction (e.g.'conductor', 'guest')
+        model_name = self.model._meta.model_name.lower()
+        context["model_name_for_url"] = model_name
+        return context
+
+
+class OrganizationBaseCreateView(CreateView):
+    template_name = "organizations/organization_form.html"  # generic template
+    success_url = reverse_lazy(
+        "organization_list"
+    )  # where to go after successful creation
+
+    def get_form_class(self):  # go after successful creation
+        """Return the form class to use in this view."""
+        if hasattr(self, "class_form") and self.class_form is not None:
+            return self.class_form
+        if hasattr(self, "form_class") and self.form_class is not None:
+            return self.form_class
+        else:
+            # Default to all fields if no form_class is specified
+            from django.forms import modelform_factory
+
+            return modelform_factory(self.model, fields="__all__")
+
+    def get_model_verbose_name(self):
+        """Return the verbose name of the model."""
+        return self.model._meta.verbose_name
+
+
+class OrganizationBaseUpdateView(UpdateView):
+    template_name = "organizations/organization_form.html"  # generic template
+    success_url = reverse_lazy("organization_list")
+
+    def get_form_class(self):
+        """Return the form class to use in this view."""
+        if hasattr(self, "class_form") and self.class_form is not None:
+            return self.class_form
+        if hasattr(self, "form_class") and self.form_class is not None:
+            return self.form_class
+        else:
+            # Default to all fields if no form_class is specified
+            from django.forms import modelform_factory
+
+            return modelform_factory(self.model, fields="__all__")
+
+    def get_model_verbose_name(self):
+        """Return the verbose name of the model."""
+        return self.model._meta.verbose_name
+
+
+class OrganizationBaseDeleteView(DeleteView):
+    template_name = "organizations/organization_confirm_delete.html"  # generic template
+    success_url = reverse_lazy("organization_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Get the model name for URL construction (e.g.'conductor', 'guest')
+        context["model_name_for_url"] = self.model.__name__.lower()
+        context["organization"] = self.get_object()
+        return context
+
+    def get_model_name_for_url(self):
+        return self.model.__name__.lower()
