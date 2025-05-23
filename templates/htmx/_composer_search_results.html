@@ -1,0 +1,21 @@
+<!-- templates/htmx/_composer_search_results.html -->
+<div class="space-y-2">
+  {% if composers %}
+    {% for composer in composers %}
+      <div class="flex items-center justify-between p-2 hover:bg-gray-100 rounded">
+        <span>{{ composer.get_full_name }}</span>
+        <button type="button"
+                class="bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600 text-xs"
+                hx-post="{% url 'add_composer' %}"
+                hx-vals='{"composer_id": "{{ composer.id }}", "selected_ids": [{% for id in selected_ids %}"
+                  {{ id }}"{% if not forloop.last %},{% endif %}{% endfor %}], "composer_search": "{{ query|default:"" }}" }'
+                hx-target="body"
+                hx-swap="beforeend">
+          Add
+        </button>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-gray-500 italic">No more composers available</p>
+  {% endif %}
+</div>

@@ -2,7 +2,7 @@
 
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Submit, Layout
 from .models import Genre, Piece
 
 
@@ -17,7 +17,9 @@ class PieceForm(forms.ModelForm):
         model = Piece
         fields = "__all__"
         widgets = {
-            "composer": forms.SelectMultiple(),
+            "composer": forms.SelectMultiple(
+                attrs={"class": "hidden"}
+            ),  # Hide but keep it for form submission
             "arranger": forms.SelectMultiple(),
             "genre": forms.SelectMultiple(),
             "difficulty": forms.Select(),
@@ -40,6 +42,15 @@ class PieceForm(forms.ModelForm):
         self.helper.form_id = "id-PieceForm"
         self.helper.form_class = "form-horizontal"
         self.helper.form_method = "post"
-        self.helper.form_action = "submit_survey"
 
-        self.helper.add_input(Submit("submit", "Submit"))
+        # Exclude composer field from the form layout
+        self.fields["composer"].label = ""  # Remove label
+
+        # Create a layout that excludes the composer field from normal rendering
+        # This defines which fields show up in the {{ form|crispy }} rendering
+        visible_fields = [field for field in self.fields if field != "composer"]
+
+        # Add the fields explicitly to control their rendering order and grouping
+        self.helper.layout = Layout(
+            # All fields except composer - they'll be rendered by the crispy filter in the template
+        )

@@ -13,7 +13,7 @@
     <div class="mb-6">
       <h1 class="text-3xl font-bold text-slate-800">
         {% if object %}
-          Edit Piece
+          Edit Piece: {{ object.title }}
         {% else %}
           Add Piece
         {% endif %}
@@ -23,7 +23,150 @@
     <div class="bg-white rounded-lg shadow-lg p-6">
       <form method="post" class="space-y-6">
         {% csrf_token %}
-        {{ form|crispy }}
+
+
+        <!-- Main form fields -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!--= Title field -->
+          <div class="col-span-2">
+            {{ form.title|as_crispy_field }}
+          </div>
+
+          {{ form.difficulty|as_crispy_field }}
+          {{ form.status|as_crispy_field }}
+          {{ form.publisher|as_crispy_field }}
+
+        </div>
+
+        <hr class="my-6">
+
+        <!-- Composer selection with HTMX -->
+        <div class="my-6">
+          <h3 class="text-lg font-semibold text-gray-700 mb-4">Composers</h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left box: Selected Composers -->
+            <div class="border rounded-lg p-4 bg-gray-50">
+              <h4 class="font-medium text-gray-700 mb-2">Selected Composers</h4>
+              <div id="selected-composers" class="min-h-[200px]">
+                {% if object.id %}
+                  <div class="flex flex-wrap gap-2">
+                    {% for composer in object.composer.all %}
+                      <div class="flex items-center bg-white border rounded-md px-3 py-2 shadow-sm">
+                        <span>{{ composer.get_full_name }}</span>
+                        <button type="button" class="ml-2 text-red-500 hover:text-red-700"
+                                hx-post="{% url 'remove_composer' %}"
+                                hx-vals='{"composer_id": "{{ composer.id }}", "selected_ids": [{% for c in object.composer.all %}"{{ c.id }}"{% if not forloop.last %},{% endif %}{% endfor %}]}'
+                                hx-target="body"
+                                hx-swap="beforeend">
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                    {% endfor %}
+                  </div>
+
+                  <!-- Hidden input to maintain the selection state -->
+                  {% for composer in object.composer.all %}
+                    <input type="hidden" name="composer" value="{{ composer.id }}">
+                  {% endfor %}
+                {% else %}
+                  <p class="text-gray-500 italic">No composers selected</p>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Right box: Search and results -->
+            <div class="border rounded-lg p-4">
+              <div class="flex justify-between items-center mb-3">
+                <h4 class="font-medium text-gray-700">Find Composers</h4>
+                <button type="button"
+                        class="bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-600 text-xs"
+                        hx-get="{% url 'composer_create_modal' %}"
+                        hx-vals='{"selected_ids": [
+
+
+
+
+
+                            {% if object.id %}{% for c in object.composer.all %}"{{ c.id }}"{% if not forloop.last %},{% endif %}{% endfor %}{% endif %}]}'
+                        hx-target="#modal-container"
+                        hx-swap="innerHTML"
+                        onclick="document.getElementById('modal-container').classList.remove('hidden')">
+                  <i class="fas fa-plus"></i> New Composer
+                </button>
+              </div>
+
+              <!-- Search input -->
+              <div class="mb-3">
+                <input type="text"
+                       id="composer-search-input"
+                       name="composer_search"
+                       placeholder="Search composers..."
+                       class="w-full border rounded-md p-2"
+                       hx-post="{% url 'search_composer' %}"
+                       hx-trigger="keyup changed delay:500ms"
+                       hx-target="#composer-results"
+                       hx-vals='{"selected_ids": [
+
+
+
+
+
+                           {% if object.id %}{% for c in object.composer.all %}"{{ c.id }}"{% if not forloop.last %},{% endif %}{% endfor %}{% endif %}]}'
+                       hx-swap="innerHTML">
+              </div>
+
+              <!-- Search results -->
+              <div id="composer-results" class="max-h-[300px] overflow-y-auto">
+                <!-- Initial load of all composers (limited to a reasonable number) -->
+                <div class="space-y-2">
+                  {% for composer in all_composers %}
+                    {% if not object.id or composer not in object.composer.all %}
+                      <div class="flex items-center justify-between p-2 hover:bg-gray-100 rounded">
+                        <span>{{ composer.get_full_name }}</span>
+                        <button type="button"
+                                class="bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600 text-xs"
+                                hx-post="{% url 'add_composer' %}"
+                                hx-vals='{"composer_id": "{{ composer.id }}", "selected_ids": [
+
+
+
+
+
+                                    {% if object.id %}{% for c in object.composer.all %}"{{ c.id }}"{% if not forloop.last %},{% endif %}{% endfor %}{% endif %}]}'
+                                hx-target="body"
+                                hx-swap="beforeend">
+                          Add
+                        </button>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-6">
+
+        <!-- Similar HTMX implementation for Arrangers -->
+
+        <hr class="my-6">
+
+        <!-- Similar HTMX implementation for genres -->
+
+        <hr class="my-6">
+
+        <!-- Remaining fields -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {{ form.location_drawer|as_crispy_field }}
+          {{ form.location_number|as_crispy_field }}
+          {{ form.copyright_date|as_crispy_field }}
+          {{ form.purchase_date|as_crispy_field }}
+          {{ form.duration|as_crispy_field }}
+          {{ form.notes|as_crispy_field }}
+        </div>
+
 
         <div class="flex justify-end space-x-3 pt-4">
           <a href="{% url 'piece_list' %}"
@@ -37,4 +180,68 @@
     </div>
   </div>
 
+  <!-- Modal container for adding a new composer -->
+  <div id="modal-container" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <!-- Modal content will be injected here by HTMX -->
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+      // Initialize the modal functionality
+      document.addEventListener('DOMContentLoaded', function () {
+
+          // Close modal when clicking outside
+          document.getElementById('modal-container').addEventListener('click', function (e) {
+              if (e.target === this) {
+                  this.classList.add('hidden');
+              }
+          });
+
+          // Update hidden form inputs when composers are selected/deselected
+          function updateComposerInputs() {
+              // Remove all existing hidden composer inputs
+              const existingInputs = document.querySelectorAll('input[name="composer"]');
+              existingInputs.forEach(input => input.remove());
+
+              // Get all currently selected composer buttons and add hidden inputs
+              const selectedComposerElements = document.querySelectorAll('#selected-composers .flex.items-center');
+              const form = document.querySelector('form')
+
+              selectedComposerElements.forEach(element => {
+                  const removeButton = element.querySelector('button[hx0vals*="composer_id"]');
+                  if (removeButton) {
+                      const hxVals = removeButton.getAttribute('hx-vals');
+                      const match = hxVals.match(/"composer_id":\s*"(\d+)"/);
+                      if (match) {
+                          const composerId = match[1];
+                          const hiddenInput = document.createElement('input');
+                          hiddenInput.type = 'hidden';
+                          hiddenInput.name = 'composer';
+                          hiddenInput.value = composerId;
+                          form.appendChild(hiddenInput);
+                      }
+                  }
+              });
+          }
+
+
+          // Set up a MutationObserver to watch for changes in the selected composers area
+          const selectedComposersDiv = document.getElementById('selected-composers');
+          const observer = new MutationObserver(function (mutations) {
+              mutations.forEach(function (mutation) {
+                  updateComposerInputs();
+              });
+          });
+
+          observer.observe(selectedComposersDiv, {
+              childList: true,
+              subtree: true
+          });
+
+          // Initial update
+          updateComposerInputs();
+      });
+
+  </script>
 {% endblock %}

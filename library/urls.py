@@ -38,6 +38,7 @@ from .views import (
     PieceUpdateView,
     PieceDeleteView,
 )
+from . import views  # Import views for HTMX functionality
 
 urlpatterns = [
     # Genre URLs
@@ -158,4 +159,14 @@ urlpatterns = [
     path("create/", PieceCreateView.as_view(), name="piece_create"),
     path("<int:pk>/update/", PieceUpdateView.as_view(), name="piece_update"),
     path("<int:pk>/delete/", PieceDeleteView.as_view(), name="piece_delete"),
+    # HTMX paths
+    path("htmx/search-composer/", views.search_composer, name="search_composer"),
+    path("htmx/add-composer/", views.add_composer, name="add_composer"),
+    path("htmx/remove-composer/", views.remove_composer, name="remove_composer"),
+    path(
+        "htmx/composer-create-modal/",
+        views.composer_create_modal,
+        name="composer_create_modal",
+    ),
+    path("htmx/save-new-composer/", views.save_new_composer, name="save_new_composer"),
 ]
